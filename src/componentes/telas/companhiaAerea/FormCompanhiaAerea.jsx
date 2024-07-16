@@ -34,6 +34,7 @@ function FormCompanhiaAerea() {
                     </div>
                     <form id="formulario" onSubmit={acaoCadastrar} className="needs-validation" noValidate>
                         <div className="modal-body">
+                            <Alerta alerta={alerta} />
                             <div className="mb-3">
                                 <label htmlFor="txtCodigo" className="form-label">Código</label>
                                 <input type="number" className="form-control" id="txtCodigo" readOnly name="codigo" value={objeto?.codigo || ''} onChange={handleChange} />
