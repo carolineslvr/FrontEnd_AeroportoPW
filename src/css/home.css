@@ -1,0 +1,19 @@
+.header-container {
+    display: flex;
+    justify-content: center; /* Centraliza horizontalmente */
+    align-items: baseline; /* Centraliza verticalmente */
+    height: 100vh; /* Altura total da viewport */
+    text-align: center;
+}
+
+.header-title {
+    font-weight: bold;
+    text-align: center;
+}
+
+.table-background {
+    background-color: rgba(255, 255, 255, 0.8); /* Fundo branco com transparência */
+    backdrop-filter: blur(10px); /* Aplica o desfoque */
+    border-radius: 10px; /* Bordas arredondadas (opcional) */
+    width: 100%; /* Garanta que o fundo cubra toda a largura */
+}
