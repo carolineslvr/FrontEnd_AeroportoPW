@@ -5,8 +5,12 @@ import TabelaPiloto from "./TabelaPiloto";
 import FormPiloto from "./FormPiloto";
 import { format, parse, isValid } from 'date-fns';
 import Carregando from "../../comuns/Carregando";
+import WithAuth from "../../../seguranca/WithAuth";
+import { useNavigate } from "react-router-dom";
 
 function Piloto(){
+
+    let navigate = useNavigate();
 
     const [alerta, setAlerta] = useState({ status : "", message : ""});
     const [listaObjetos, setListaObjetos] = useState([]);
@@ -30,11 +34,17 @@ function Piloto(){
     }
 
     const editarObjeto = async codigo => {
-        const piloto = await getPilotoPorCodigoAPI(codigo);
-        setObjeto(piloto);
-        setDisplayDate(piloto.dataNascimento ? format(new Date(piloto.dataNascimento), 'dd/MM/yyyy') : "");
-        setEditar(true);
-        setAlerta({status : "", message :""});
+        try {
+            const piloto = await getPilotoPorCodigoAPI(codigo);
+            setObjeto(piloto);
+            setDisplayDate(piloto.dataNascimento ? format(new Date(piloto.dataNascimento), 'dd/MM/yyyy') : "");
+            setEditar(true);
+            setAlerta({status : "", message :""});
+        } catch (err) {
+            window.location.reload();
+            navigate("login", { replace: true });
+        }
+        
     }
 
     const acaoCadastrar = async e => {
@@ -49,7 +59,8 @@ function Piloto(){
                 setEditar(true);
             }
         } catch (err) {
-            console.log(err);
+            window.location.reload();
+            navigate("login", { replace: true });
         }
         recuperaPilotos();
     }
@@ -79,16 +90,27 @@ function Piloto(){
     };
 
     const recuperaPilotos = async () => {
-        setCarregando(true);
-        setListaObjetos(await getPilotosAPI());
-        setCarregando(false);
+        try {
+            setCarregando(true);
+            setListaObjetos(await getPilotosAPI());
+            setCarregando(false);
+        } catch (err) {
+            window.location.reload();
+            navigate("login", { replace: true });
+        }
+        
     }
 
     const remover = async codigo => {
         if (window.confirm('Deseja remover este piloto do sistema?')){
-            let retornoAPI = await deletePilotoAPI(codigo);
-            setAlerta({ status : retornoAPI.status, message : retornoAPI.message});
-            recuperaPilotos();
+            try {
+                let retornoAPI = await deletePilotoAPI(codigo);
+                setAlerta({ status : retornoAPI.status, message : retornoAPI.message});
+                recuperaPilotos();  
+            } catch (err) {
+                window.location.reload();
+                navigate("login", { replace: true });
+            }    
         }
     }
 
@@ -111,4 +133,4 @@ function Piloto(){
     )
 }
 
-export default Piloto;
+export default WithAuth(Piloto);

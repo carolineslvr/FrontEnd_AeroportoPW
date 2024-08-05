@@ -7,8 +7,12 @@ import TabelaVoo from "./TabelaVoo";
 import FormVoo from "./FormVoo";
 import { format, parse, isValid } from 'date-fns';
 import Carregando from "../../comuns/Carregando";
+import WithAuth from "../../../seguranca/WithAuth";
+import { useNavigate } from "react-router-dom";
 
 function Voo(){
+
+    let navigate = useNavigate();
 
     const [alerta, setAlerta] = useState({ status : "", message : ""});
     const [listaObjetos, setListaObjetos] = useState([]);
@@ -41,12 +45,17 @@ function Voo(){
     }
 
     const editarObjeto = async codigo => {
-        const voo = await getVooPorCodigoAPI(codigo);
-        setObjeto(voo);
-        setDisplayDatePartida(voo.dataPartida ? format(new Date(voo.dataPartida), 'dd/MM/yyyy') : "");
-        setDisplayDateChegada(voo.dataChegada ? format(new Date(voo.dataChegada), 'dd/MM/yyyy') : "");
-        setEditar(true);
-        setAlerta({status : "", message :""});
+        try{
+            const voo = await getVooPorCodigoAPI(codigo);
+            setObjeto(voo);
+            setDisplayDatePartida(voo.dataPartida ? format(new Date(voo.dataPartida), 'dd/MM/yyyy') : "");
+            setDisplayDateChegada(voo.dataChegada ? format(new Date(voo.dataChegada), 'dd/MM/yyyy') : "");
+            setEditar(true);
+            setAlerta({status : "", message :""});
+        } catch (err) {
+            window.location.reload();
+            navigate("login", { replace: true });
+        }  
     }
 
     const acaoCadastrar = async e => {
@@ -62,8 +71,9 @@ function Voo(){
                 setEditar(true);
             }
         } catch (err) {
-            console.log(err);
-        }
+            window.location.reload();
+            navigate("login", { replace: true });
+        }  
         recuperaVoos();
     }
 
@@ -106,24 +116,45 @@ function Voo(){
     };
 
     const recuperaCompanhiasAereas = async () => {
-        setListaCompanhiasAereas(await getCompanhiasAereasAPI());
+        try {
+            setListaCompanhiasAereas(await getCompanhiasAereasAPI());
+        } catch (err) {
+            window.location.reload();
+            navigate("login", { replace: true });
+        }   
     }
 
     const recuperaPilotos = async () => {
-        setListaPilotos(await getPilotosAPI());
+        try {
+            setListaPilotos(await getPilotosAPI());
+        } catch (err) {
+            window.location.reload();
+            navigate("login", { replace: true });
+        }  
     }
 
     const recuperaVoos = async () => {
-        setCarregando(true);
-        setListaObjetos(await getVoosAPI());
-        setCarregando(false);
+        try {
+            setCarregando(true);
+            setListaObjetos(await getVoosAPI());
+            setCarregando(false);
+        } catch (err) {
+            window.location.reload();
+            navigate("login", { replace: true });
+        }
     }
 
     const remover = async codigo => {
         if (window.confirm('Deseja remover este voo do sistema?')){
-            let retornoAPI = await deleteVooAPI(codigo);
-            setAlerta({ status : retornoAPI.status, message : retornoAPI.message});
-            recuperaVoos();
+            try {
+                let retornoAPI = await deleteVooAPI(codigo);
+                setAlerta({ status : retornoAPI.status, message : retornoAPI.message});
+                recuperaVoos();
+            } catch (err) {
+                window.location.reload();
+                navigate("login", { replace: true });
+            } 
+            
         }
     }
 
@@ -147,4 +178,4 @@ function Voo(){
     )
 }
 
-export default Voo;
+export default WithAuth(Voo);

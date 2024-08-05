@@ -3,9 +3,13 @@ import CompanhiaAereaContext from "./CompanhiaAereaContext";
 import { getCompanhiasAereasAPI, getCompanhiaAereaPorCodigoAPI,cadastraCompanhiaAereaAPI,deleteCompanhiaAereaAPI } from "../../../servicos/CompanhiaAereaServico";
 import TabelaCompanhiaAerea from "./TabelaCompanhiaAerea";
 import FormCompanhiaAerea from "./FormCompanhiaAerea";
+import WithAuth from "../../../seguranca/WithAuth";
+import { useNavigate } from "react-router-dom";
 import Carregando from "../../comuns/Carregando";
 
 function CompanhiaAerea(){
+
+    let navigate = useNavigate();
 
     const [alerta, setAlerta] = useState({ status : "", message : ""});
     const [listaObjetos, setListaObjetos] = useState([]);
@@ -25,9 +29,14 @@ function CompanhiaAerea(){
     }
 
     const editarObjeto = async codigo => {
-        setObjeto(await getCompanhiaAereaPorCodigoAPI(codigo));
-        setEditar(true);
-        setAlerta({status : "", message :""});
+        try {
+            setObjeto(await getCompanhiaAereaPorCodigoAPI(codigo));
+            setEditar(true);
+            setAlerta({status : "", message :""});
+        } catch (err) {
+            window.location.reload();
+            navigate("login", { replace: true });
+        }
     }
 
     const acaoCadastrar = async e => {
@@ -41,7 +50,8 @@ function CompanhiaAerea(){
                 setEditar(true);
             }
         } catch (err) {
-            console.log(err);
+            window.location.reload();
+            navigate("login", { replace: true });
         }
         recuperaCompanhiasAereas();
     }
@@ -53,16 +63,28 @@ function CompanhiaAerea(){
     }
 
     const recuperaCompanhiasAereas = async () => {
-        setCarregando(true);
-        setListaObjetos(await getCompanhiasAereasAPI());
-        setCarregando(false);
+        try{
+            setCarregando(true);
+            setListaObjetos(await getCompanhiasAereasAPI());
+            setCarregando(false);
+        } catch (err) {
+            window.location.reload();
+            navigate("login", { replace: true });
+        }
+       
     }
 
     const remover = async codigo => {
         if (window.confirm('Deseja remover esta Companhia Aérea do sistema?')){
-            let retornoAPI = await deleteCompanhiaAereaAPI(codigo);
+            try {
+                let retornoAPI = await deleteCompanhiaAereaAPI(codigo);
             setAlerta({ status : retornoAPI.status, message : retornoAPI.message});
             recuperaCompanhiasAereas();
+            } catch (err) {
+                window.location.reload();
+                navigate("login", { replace: true });
+            }
+            
         }
     }
 
@@ -81,9 +103,6 @@ function CompanhiaAerea(){
             <FormCompanhiaAerea/>
         </CompanhiaAereaContext.Provider>
     )
-
-
-
 }
 
-export default CompanhiaAerea;
+export default WithAuth (CompanhiaAerea);

@@ -1,9 +1,12 @@
+import { getToken } from '../seguranca/Autenticacao';
+
 export const getVoosAPI = async () => {
     const response = await fetch(`${process.env.REACT_APP_ENDERECO_API}/voo`,
         {
             method : "GET",
             headers : {
-                "Content-Type" : "application/json"
+                "Content-Type" : "application/json",
+                "authorization" : getToken()
             }
         });
     const data = await response.json();
@@ -16,7 +19,8 @@ export const getVooPorCodigoAPI = async codigo => {
         {
             method : "GET",
             headers : {
-                "Content-Type" : "application/json"
+                "Content-Type" : "application/json",
+                "authorization" : getToken()
             }
         });
     const data = await response.json();
@@ -29,7 +33,8 @@ export const deleteVooAPI = async codigo => {
         {
             method : "DELETE",
             headers : {
-                "Content-Type" : "application/json"
+                "Content-Type" : "application/json",
+                "authorization" : getToken()
             }
         });
     const data = await response.json();
@@ -42,7 +47,8 @@ export const cadastraVooAPI = async (objeto, metodo) => {
         {
             method : metodo,
             headers : {
-                "Content-Type" : "application/json"
+                "Content-Type" : "application/json",
+                "authorization" : getToken()
             },
             body : JSON.stringify(objeto)
         });
