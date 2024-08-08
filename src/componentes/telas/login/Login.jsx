@@ -7,7 +7,7 @@ import './signin.css';
 
 function Login() {
 
-    const [email, setEmail] = useState("");
+    const [nomeUser, setnomeUser] = useState("");
     const [senha, setSenha] = useState("");
     const [alerta, setAlerta] = useState({ status: "", message: "" });
     const [autenticado, setAutenticado] = useState(false);
@@ -19,7 +19,7 @@ function Login() {
 
         try {
             const body = {
-                email: email,
+                nomeUser: nomeUser,
                 senha: senha
             };
             setCarregando(true);
@@ -71,11 +71,11 @@ function Login() {
                                 <h1 className="h3 mb-3 fw-normal">Login de usuário</h1>
 
                                 <div className="form-floating">
-                                    <input type="text" className="form-control" id="floatingInput" placeholder="E-mail do usuário"
-                                        value={email}
-                                        name="email"
-                                        onChange={e => setEmail(e.target.value)} />
-                                    <label htmlFor="floatingInput">E-mail</label>
+                                    <input type="text" className="form-control" id="floatingInput" placeholder="Usuário"
+                                        value={nomeUser}
+                                        name="nomeUser"
+                                        onChange={e => setnomeUser(e.target.value)} />
+                                    <label htmlFor="floatingInput">Usuário</label>
                                 </div>
                                 <div className="form-floating">
                                     <input type="password" className="form-control" id="floatingPassword" placeholder="Senha"
